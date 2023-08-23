@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles"; // Import styled from @mui/material/styles
 import Post from "../Post/Post";
+import Comment from "../Comment/Comment";
 import { Container } from "@mui/material";
 import PostForm from "../Post/PostForm";
 
@@ -22,8 +23,10 @@ function Home() {
     const [error, setError] = useState(null);
     const [isLoaded, setIsloaded] = useState(false);
     const [postList, setPostList] = useState([]);
+    const [commentList, setCommentList] = useState([]);
 
-    useEffect(() => {
+
+    const refreshPosts = () => {
         fetch("/posts")
             .then(res => res.json())
             .then(
@@ -36,7 +39,13 @@ function Home() {
                     setError(error);
                 }
             )
-    }, [])
+    }
+
+
+
+    useEffect(() => {
+        refreshPosts();
+    }, [postList])
 
     if (error) {
         return <div> Error !! </div>;
@@ -46,13 +55,20 @@ function Home() {
     else {
         return (
 
-            <div fixed className={classes.container}>
-                <PostForm userId={1} userName={"ddd"} title={"post.title"} text={"post.text"} />
-                {postList.map(post => (
-                    <Post userId={post.userId} userName={post.userName} title={post.title} text={post.text} ></Post>
+            <div fixed className={classes.container} >
+                <PostForm userId={1} userName={"ddd"} refreshPosts={refreshPosts} />
+                {postList.map( (post) => (
+                    <Post
+                        
+                        postId={post.id}
+                        userId={post.userId}
+                        userName={post.userName}
+                        title={post.title}
+                        text={post.text}
+                    />
                 ))}
-
             </div>
+
 
         );
     }
