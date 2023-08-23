@@ -31,19 +31,17 @@ function Navbar() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            <Link className="link" to="/"> Home </Link>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} textAlign={"left"}>
+                            <Link className="linkHome" to="/"> Home </Link>
                         </Typography>
-                        <Link className="link" to={{ pathname: '/users/' + userId }}> User </Link>
+                        <Typography variant="h6" component="div">
+                        <Link className="linkUser" to={{ pathname: '/users/' + userId }}> User </Link>
+                        </Typography>
                     </Toolbar>
                 </AppBar>
             </Box>
 
 
-            <ul>
-                <li></li>
-                <li></li>
-            </ul>
         </div>
     )
 }

@@ -1,9 +1,23 @@
-
-import Post from "../Post/Post";
 import React, { useState, useEffect } from "react";
+import { makeStyles } from "@mui/styles"; // Import styled from @mui/material/styles
+import Post from "../Post/Post";
+import { Container } from "@mui/material";
+
+
+const useStyles = makeStyles((theme) => ({
+    container: {
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent : "center",
+        alignItems : "center",
+        backgroundColor: "#cfe8fc",
+        height : "100vh",
+    }
+}))
+
 
 function Home() {
-
+    const classes = useStyles();
     const [error, setError] = useState(null);
     const [isLoaded, setIsloaded] = useState(false);
     const [postList, setPostList] = useState([]);
@@ -31,12 +45,12 @@ function Home() {
     else {
         return (
 
-            <div className="container">
+            <Container fixed className={classes.container}>
                 {postList.map(post => (
-                    <Post title = {post.title} text =  { post.text } ></Post>
+                    <Post userId = {post.userId} userName = {post.userName} title = {post.title} text =  { post.text } ></Post>
                 ))}
 
-            </div>
+            </Container>
 
         );
     }
