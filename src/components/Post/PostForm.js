@@ -7,7 +7,7 @@ import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-
+import {Button} from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Avatar from '@mui/material/Avatar';
 import { red } from '@mui/material/colors';
@@ -18,6 +18,7 @@ import { styled } from '@mui/material/styles'; // Import styled from @mui/materi
 import { makeStyles } from "@mui/styles";
 import CommentIcon from '@mui/icons-material/Comment';
 import { Link } from 'react-router-dom'
+import { InputAdornment, OutlinedInput } from "@mui/material";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,19 +45,42 @@ const ExpandMore = styled((props) => {
 
 
 
-function Post(props) {
-  const { title, text , userName , userId } = props;
+function PostForm(props) {
+
+  const {userName , userId } = props;
   const classes = useStyles();
-  const [expanded, setExpanded] = useState(false);
-  const [liked, setLiked] = useState(false);
+  const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+
+const savePost = () =>{
+    fetch("/posts",
+    {
+        method :"POST",
+        headers :{
+            "Content-Type" : "application/json",
+        },
+        body : JSON.stringify({
+            title : title,
+            userId : userId,
+            text: text,
+        }),
+    })
+    .then( (res) => res.json() )
+    .catch( (err) => console.log("error") )
+}
+
+  const handleSubmit = () => {
+    savePost();
   };
 
-  const handleLike = () => {
-    setLiked(!liked);
+  const handleTitle = (event) => {
+    setTitle(event);
   };
+
+  const handleText = (e) => {
+    setText(e);
+  }
 
   return (
     <Card className={classes.root}>
@@ -71,39 +95,44 @@ function Post(props) {
           
         }
     
-        title={title}
+        title={<OutlinedInput
+        id="outlined-adornment-amount"
+        multiline
+        placeholder="Title"
+        inputProps = {{maxLength : 25}}
+        fullWidth
+        onChange={ (i) => handleTitle(i.target.value ) }
+        >
+        </OutlinedInput>}
  
       />
 
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {text}
+        <OutlinedInput
+        id="outlined-adornment-amount"
+        multiline
+        placeholder="Text"
+        inputProps = {{maxLength : 250}}
+        fullWidth
+        onChange={ (i) => handleText(i.target.value) }
+        endAdornment = {
+            <InputAdornment position="end">
+            <Button
+            variant="contained" 
+            style={{backgroundColor: "blue", color : "white" , }}
+            onClick={handleSubmit}>
+                POST
+            </Button>
+            </InputAdornment>
+        }>
+        
+        </OutlinedInput>
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        
-        <IconButton
-        onClick={handleLike}
-        aria-label="add to favorites">
-          <FavoriteIcon style = { liked? {color : "red"} : null } />
-        </IconButton>
-        
-        <CommentIcon
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </CommentIcon>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-
-        </CardContent>
-      </Collapse>
+   
     </Card>
   );
 }
 
-export default Post;
+export default PostForm;

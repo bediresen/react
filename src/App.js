@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route, Routes } from 'react-router-dom';
 import Home from './components/Home/Home';
 import User from './components/User/User';
 import Navbar from './components/Navbar/Navbar';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
 

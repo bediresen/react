@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles"; // Import styled from @mui/material/styles
 import Post from "../Post/Post";
 import { Container } from "@mui/material";
+import PostForm from "../Post/PostForm";
 
 
 const useStyles = makeStyles((theme) => ({
     container: {
         display: "flex",
         flexWrap: "wrap",
-        justifyContent : "center",
-        alignItems : "center",
-        backgroundColor: "#cfe8fc",
-        height : "100vh",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f0f5ff",
+
     }
-}))
+}));
 
 
 function Home() {
@@ -45,12 +46,13 @@ function Home() {
     else {
         return (
 
-            <Container fixed className={classes.container}>
+            <div fixed className={classes.container}>
+                <PostForm userId={1} userName={"ddd"} title={"post.title"} text={"post.text"} />
                 {postList.map(post => (
-                    <Post userId = {post.userId} userName = {post.userName} title = {post.title} text =  { post.text } ></Post>
+                    <Post userId={post.userId} userName={post.userName} title={post.title} text={post.text} ></Post>
                 ))}
 
-            </Container>
+            </div>
 
         );
     }
