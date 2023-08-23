@@ -19,35 +19,35 @@ import { styled } from '@mui/material/styles'; // Import styled from @mui/materi
 
 
 const ExpandMore = styled((props) => {
-    const { expand, ...other } = props;
-    return <IconButton {...other} />;
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
 })(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest,
-    }),
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
 }));
 
 function Post(props) {
-    const { title, text } = props;
+  const { title, text } = props;
 
-    const classes = {
-        root: {
-            width: 800,
-            textAlign: "left",
-            margin: 20,
-        },
-    };
+  const classes = {
+    root: {
+      width: 800,
+      textAlign: "left",
+      margin: 20,
+    },
+  };
 
-    const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
-    return (
-        <Card className="postContainer" sx={{ maxWidth: 345 }}>
+  return (
+    <Card className="postContainer" sx={{ maxWidth: 345 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -62,7 +62,7 @@ function Post(props) {
         title={title}
         subheader="September 14, 2016"
       />
-     
+
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {text}
@@ -86,11 +86,11 @@ function Post(props) {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          
+
         </CardContent>
       </Collapse>
     </Card>
-    );
+  );
 }
 
 export default Post;
