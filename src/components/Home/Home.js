@@ -57,9 +57,9 @@ function Home() {
 
             <div fixed className={classes.container} >
                 <PostForm userId={1} userName={"ddd"} refreshPosts={refreshPosts} />
-                {postList.map( (post) => (
+                {postList.map((post) => (
                     <Post
-                        
+                        likes={post.postLikes}
                         postId={post.id}
                         userId={post.userId}
                         userName={post.userName}

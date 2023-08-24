@@ -1,5 +1,4 @@
-
-import Comment from "../Comment/Comment"
+import { Container } from "@mui/material";
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -10,14 +9,13 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import React, { useState, useEffect, useRef } from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Avatar from '@mui/material/Avatar';
-import { red } from '@mui/material/colors';
-import MoreVertIcon from '@mui/icons-material/MoreVert'; // Add this import
-import CardMedia from '@mui/material/CardMedia'; // Add this import
 import Collapse from '@mui/material/Collapse'; // Add this import
 import { styled } from '@mui/material/styles'; // Import styled from @mui/material/styles
 import { makeStyles } from "@mui/styles";
 import CommentIcon from '@mui/icons-material/Comment';
 import { Link } from 'react-router-dom'
+import Comment from "../Comment/Comment";
+import CommentForm from "../Comment/CommentForm";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,18 +42,18 @@ const ExpandMore = styled((props) => {
 
 
 
-
-
-
 function Post(props) {
-  const { postId, title, text, userName, userId } = props;
+  const { postId, title, text, userName, userId, likes } = props;
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [commentList, setCommentList] = useState([]);
+  const[isLiked, setIsLiked] = useState(false);
   const isInitialMount = useRef(true);
+  const[likeCount, setLikeCount] = useState(likes.length || 0)
+  const [likeId, setLikeId] = useState(null);
+
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -64,7 +62,15 @@ function Post(props) {
   };
 
   const handleLike = () => {
-    setLiked(!liked);
+    if (!isLiked) {
+      setIsLiked(true);
+      saveLike();
+      setLikeCount(likeCount + 1);
+    } else {
+      setIsLiked(false);
+      deleteLike();
+      setLikeCount(likeCount - 1);
+    }
   };
 
 
@@ -83,6 +89,36 @@ function Post(props) {
       );
   };
 
+  const saveLike = () => {
+    fetch("/likes" ,{
+      method :"POST",
+      headers : {
+        "Content-Type" : "application/json",
+      },
+      body : JSON.stringify({
+        postId : postId,
+        userId : userId,
+      }),
+    })
+  }
+
+  const deleteLike = () => {
+    fetch("/likes/" + likeId , {
+      method : "DELETE",
+    })
+    .catch((err) => console.log(err))
+  }
+
+  const checkLikes = () =>{
+    var likeControl = likes.find((like => like.userId === userId));
+    if(likeControl != null){
+      setLikeId(likeControl.id)
+      setIsLiked(true);
+    }
+   
+  }
+
+  useEffect(() => {checkLikes()} , [])
 
   useEffect(() => {
     if (isInitialMount.current)
@@ -113,27 +149,35 @@ function Post(props) {
           {text}
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-
-        <IconButton
-          onClick={handleLike}
-          aria-label="add to favorites">
-          <FavoriteIcon style={liked ? { color: "red" } : null} />
-        </IconButton>
-
-        <CommentIcon
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </CommentIcon>
+      
+      <CardActions disableSpacing style={{ justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton onClick={handleLike} aria-label="add to favorites">
+            <FavoriteIcon style={isLiked ? { color: "red" } : null} />
+          </IconButton>
+          {likeCount}
+        </div>
+        <div style={{ marginLeft: 'auto' }}>
+          <CommentIcon
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+            style={{ marginLeft: 'auto' }} 
+          >
+            <ExpandMoreIcon />
+          </CommentIcon>
+        </div>
       </CardActions>
+      
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-
-        </CardContent>
+        <Container fixed className={classes.container}>
+          {error ? "error" :
+            isLoaded ? commentList.map(comment => (
+              <Comment userId={1} userName={"USER"} text={comment.text}></Comment>
+            )) : "Loading"}
+          <CommentForm userId={1} userName={"USER"} postId={postId}></CommentForm>
+        </Container>
       </Collapse>
     </Card>
   );
