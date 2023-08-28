@@ -45,7 +45,7 @@ function Home() {
 
     useEffect(() => {
         refreshPosts();
-    }, [postList])
+    }, [])
 
     if (error) {
         return <div> Error !! </div>;
