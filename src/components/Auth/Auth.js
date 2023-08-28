@@ -1,10 +1,13 @@
 import { FormControl, InputLabel, Input, Button, FormHelperText } from "@mui/material";
 import React, { useState } from "react";
 
+
 function Auth() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    
 
     const handleUsername = (value) => {
         setUsername(value);
@@ -14,16 +17,11 @@ function Auth() {
         setPassword(value);
     }
 
-    const handleLogin = () => {
-        sendRequest("register")
+    const handleButton = (path) => {
+        sendRequest(path)
         setUsername("")
         setPassword("")
-    }
-
-    const handleRegister = () => {
-        sendRequest("login")
-        setUsername("")
-        setPassword("")
+        window.location.href = "/auth";
     }
 
     const sendRequest = (path) => {
@@ -38,7 +36,10 @@ function Auth() {
             }),
         })
         .then((res) => res.json())
-        .then((result) => result)
+        .then((result) => {
+            localStorage.setItem("tokenKey" , result.message);
+            localStorage.setItem("currentUser" , result.userId);
+            localStorage.setItem("userName" , username)})
         .catch((err) => console.log(err))
     }
 
@@ -58,7 +59,7 @@ function Auth() {
                     background: "blue",
                     color: "white"
                 }}
-                onClick={handleRegister}
+                onClick={() => handleButton("/register")}
             > Register
             </Button>
             <FormHelperText style={{ margin: 20 }}> Are you already registered?</FormHelperText>
@@ -67,7 +68,7 @@ function Auth() {
                     background: "blue",
                     color: "white"
                 }}
-                onClick={handleLogin}
+                onClick={ () => handleButton("/login")}
                 > Login
             </Button>
 

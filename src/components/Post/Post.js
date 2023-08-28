@@ -16,6 +16,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 import { Link } from 'react-router-dom'
 import Comment from "../Comment/Comment";
 import CommentForm from "../Comment/CommentForm";
+import { LocalLaundryService } from "@mui/icons-material";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +54,7 @@ function Post(props) {
   const isInitialMount = useRef(true);
   const[likeCount, setLikeCount] = useState(likes.length || 0)
   const [likeId, setLikeId] = useState(null);
-
+  let disabled = localStorage.getItem("currentUser") == null ? true : false;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -94,10 +95,11 @@ function Post(props) {
       method :"POST",
       headers : {
         "Content-Type" : "application/json",
+        "Authorization" : localStorage.getItem("tokenKey"),
       },
       body : JSON.stringify({
         postId : postId,
-        userId : userId,
+        userId : localStorage.getItem("currentUser"),
       }),
     })
   }
@@ -105,12 +107,16 @@ function Post(props) {
   const deleteLike = () => {
     fetch("/likes/" + likeId , {
       method : "DELETE",
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization" : localStorage.getItem("tokenKey"),
+      },
     })
     .catch((err) => console.log(err))
   }
 
   const checkLikes = () =>{
-    var likeControl = likes.find((like => like.userId === userId));
+    var likeControl = likes.find((like => "" + like.userId === localStorage.getItem("currentUser")));
     if(likeControl != null){
       setLikeId(likeControl.id)
       setIsLiked(true);
@@ -152,7 +158,7 @@ function Post(props) {
       
       <CardActions disableSpacing style={{ justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={handleLike} aria-label="add to favorites">
+          <IconButton onClick={handleLike} aria-label="add to favorites" disabled={disabled}>
             <FavoriteIcon style={isLiked ? { color: "red" } : null} />
           </IconButton>
           {likeCount}
@@ -176,7 +182,8 @@ function Post(props) {
             isLoaded ? commentList.map(comment => (
               <Comment userId={1} userName={"USER"} text={comment.text}></Comment>
             )) : "Loading"}
-          <CommentForm userId={1} userName={"USER"} postId={postId}></CommentForm>
+            {disabled? "" :
+           <CommentForm userId={1} userName={"USER"} postId={postId}></CommentForm>}
         </Container>
       </Collapse>
     </Card>
