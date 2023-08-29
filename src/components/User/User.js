@@ -18,7 +18,7 @@ function User(){
     return(
         <div className={classes.root}>
           <UserAvatar avatarId = {0} ></UserAvatar>
-          <UserActivity></UserActivity>
+          <UserActivity userId = {userId}></UserActivity>
           User!! {userId}  
         </div>
     )
