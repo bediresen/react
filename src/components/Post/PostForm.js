@@ -23,6 +23,7 @@ import { InputAdornment, OutlinedInput } from "@mui/material";
 
 import Snackbar from '@mui/material/Snackbar';
 import {Alert} from "@mui/material";
+import { PostWithAuth } from "../../services/HttpService";
 
 
 
@@ -60,19 +61,11 @@ function PostForm(props) {
 
 
     const savePost = () => {
-        fetch("/posts",
-            {
-                method: "POST",
-                headers : {
-                    "Content-Type" : "application/json",
-                    "Authorization" : localStorage.getItem("tokenKey"),
-                  },
-                body: JSON.stringify({
-                    title: title,
-                    userId: userId,
-                    text: text,
-                }),
-            })
+        PostWithAuth("/posts", {
+            title: title,
+            userId: userId,
+            text: text,
+        })
             .then((res) => res.json())
             .catch((err) => console.log("error"))
     }

@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, setRef } from "@mui/material";
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom'
 import Comment from "../Comment/Comment";
 import CommentForm from "../Comment/CommentForm";
 import { LocalLaundryService } from "@mui/icons-material";
-
+import { DeleteWithAuth, PostWithAuth } from "../../services/HttpService";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,7 +54,12 @@ function Post(props) {
   const isInitialMount = useRef(true);
   const[likeCount, setLikeCount] = useState(likes.length || 0)
   const [likeId, setLikeId] = useState(null);
+  const[refresh , setRefresh] = useState(false);
   let disabled = localStorage.getItem("currentUser") == null ? true : false;
+
+const setCommentRefresh = () =>{
+  setRefresh(true);
+}
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -88,30 +93,20 @@ function Post(props) {
           setError(error);
         }
       );
+      setRefresh(false)
   };
 
   const saveLike = () => {
-    fetch("/likes" ,{
-      method :"POST",
-      headers : {
-        "Content-Type" : "application/json",
-        "Authorization" : localStorage.getItem("tokenKey"),
-      },
-      body : JSON.stringify({
-        postId : postId,
-        userId : localStorage.getItem("currentUser"),
-      }),
+    PostWithAuth("/likes" , {
+      postId : postId,
+      userId : localStorage.getItem("currentUser")
     })
+  .then((res) => res.json())
+  .catch((err) => console.log(err))
   }
 
   const deleteLike = () => {
-    fetch("/likes/" + likeId , {
-      method : "DELETE",
-      headers : {
-        "Content-Type" : "application/json",
-        "Authorization" : localStorage.getItem("tokenKey"),
-      },
-    })
+    DeleteWithAuth("/likes/" + likeId)
     .catch((err) => console.log(err))
   }
 
@@ -131,7 +126,7 @@ function Post(props) {
       isInitialMount.current = false;
     else
       refreshComments();
-  }, [commentList])
+  }, [refresh])
 
   return (
     <Card className={classes.root}>
@@ -180,10 +175,10 @@ function Post(props) {
         <Container fixed className={classes.container}>
           {error ? "error" :
             isLoaded ? commentList.map(comment => (
-              <Comment userId={1} userName={"USER"} text={comment.text}></Comment>
+              <Comment userId={comment.userId} userName={comment.userName} text={comment.text}></Comment>
             )) : "Loading"}
             {disabled? "" :
-           <CommentForm userId={1} userName={"USER"} postId={postId}></CommentForm>}
+           <CommentForm userId={localStorage.getItem("currentUser")} userName={localStorage.getItem("currentUser")} postId={postId} setCommentRefresh = {setCommentRefresh}></CommentForm>}
         </Container>
       </Collapse>
     </Card>

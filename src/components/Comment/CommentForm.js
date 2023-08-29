@@ -4,6 +4,7 @@ import { Avatar, InputAdornment, CardContent, OutlinedInput } from "@mui/materia
 import { Link } from 'react-router-dom'
 import { Input } from "@mui/icons-material";
 import { Button } from "@mui/material";
+import { PostWithAuth } from "../../services/HttpService";
 
 const useStyles = makeStyles((theme) => ({
     comment: {
@@ -26,30 +27,22 @@ const useStyles = makeStyles((theme) => ({
 
 function CommentForm(props) {
 
-    const { userId, userName , postId} = props;
+    const { userId, userName , postId , setCommentRefresh} = props;
     const classes = useStyles();
     const[text, setText] = useState("");
 
     const saveComment = (postId , userId) => {
-        fetch("/comments", {
-            method: "POST",
-            headers : {
-                "Content-Type" : "application/json",
-                "Authorization" : localStorage.getItem("tokenKey"),
-              },
-            body: JSON.stringify({
-                postId: postId,
-                userId: userId,
-                text: text,
-            }),
-
-        })
+        PostWithAuth("/comments" ,{
+            postId: postId,
+            userId: userId,
+            text: text,
+        } )
     }
-
 
     const handleSubmit = () => {
         saveComment(postId, userId);
         setText("");
+        setCommentRefresh();
     }
 
     const handleChange = (e) => {

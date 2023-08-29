@@ -12,6 +12,8 @@ import Modal from '@mui/material/Modal';
 import { List, ListItem ,Checkbox, ListItemButton  , ListItemText ,ListItemAvatar , Avatar  , ListItemSecondaryAction, Radio} from '@mui/material';
 import { useState } from 'react';
 import Post from '../Post/Post';
+import { PutWithAuth } from '../../services/HttpService';
+
 
 
 const useStyles = makeStyles({
@@ -39,7 +41,7 @@ modal: {
 })
 
 function UserAvatar(props) {
-    const {avatarId, userId, userName} = props;
+    const {avatarId, userName, userId} = props;
     const [open, setOpen] = React.useState(false);
     const [checked, setChecked] = React.useState([1]);
     const [selectedValue, setSelectedValue] = useState(avatarId);
@@ -50,17 +52,9 @@ function UserAvatar(props) {
     saveAvatar();}
 
 const saveAvatar = () =>{
-
-  fetch("/users/" +localStorage.getItem("currentUser"),{
-    method:"PUT",
-    headers: {
-      "Content-Type" : "application/json",
-      "Authorization" : localStorage.getItem("tokenKey"),
-    },
-    body : JSON.stringify({
-      avatar : selectedValue,
-    }),
-  })
+  PutWithAuth("/users/" +userId,{
+  avatar : selectedValue,
+} )
   .then((res) => res.json())
   .catch((err) => console.log(err))
 }
@@ -98,14 +92,17 @@ const handleToggle = (value) => () => {
             />
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
-                    Username
+                    {userName} 
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                    User info
                 </Typography>
             </CardContent>
             <CardActions>
-            <Button onClick={handleOpen}>Change Avatar</Button>
+              {localStorage.getItem("currentUser") == userId ?    <Button onClick={handleOpen}>
+              Change Avatar
+              </Button> : ""}
+         
         <Modal
         className={classes.modal}
           open={open}
