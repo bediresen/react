@@ -140,7 +140,7 @@ function Post(props) {
           <Link className="linkUser" to={{ pathname: '/users/' + userId }}>
 
             <Avatar sx={{ backgroundColor: "blue" }} aria-label="recipe">
-              {userName.charAt(0).toUpperCase()}
+            {userName.charAt(0).toUpperCase()}
             </Avatar>
           </Link>
 

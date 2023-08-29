@@ -56,18 +56,20 @@ function Home() {
         return (
 
             <div fixed className={classes.container} >
-                {localStorage.getItem("currentUser") == null ? "" :  
-                 <PostForm userId={localStorage.getItem("currentUser")} userName={localStorage.getItem("userName")} refreshPosts={refreshPosts} /> }
-              
+                {localStorage.getItem("currentUser") == null ? "" :
+                    <PostForm userId={localStorage.getItem("currentUser")} userName={localStorage.getItem("userName")} refreshPosts={refreshPosts} />}
+
                 {postList.map((post) => (
-                    <Post
-                        likes={post.postLikes}
-                        postId={post.id}
-                        userId={post.userId}
-                        userName={post.userName}
-                        title={post.title}
-                        text={post.text}
-                    />
+                    post.userName? (
+                        <Post
+                            likes={post.postLikes}
+                            postId={post.id}
+                            userId={post.userId}
+                            userName={post.userName}
+                            title={post.title}
+                            text={post.text}
+                        />
+                    ) : null
                 ))}
             </div>
 

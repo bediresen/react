@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { List, ListItem ,Checkbox, ListItemButton  , ListItemText ,ListItemAvatar , Avatar  , ListItemSecondaryAction, Radio} from '@mui/material';
 import { useState } from 'react';
+import Post from '../Post/Post';
 
 
 const useStyles = makeStyles({
@@ -40,10 +41,30 @@ modal: {
 function UserAvatar(props) {
     const {avatarId, userId, userName} = props;
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const [checked, setChecked] = React.useState([1]);
     const [selectedValue, setSelectedValue] = useState(avatarId);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => {
+      setOpen(false);
+    saveAvatar();}
+
+const saveAvatar = () =>{
+
+  fetch("/users/" +localStorage.getItem("currentUser"),{
+    method:"PUT",
+    headers: {
+      "Content-Type" : "application/json",
+      "Authorization" : localStorage.getItem("tokenKey"),
+    },
+    body : JSON.stringify({
+      avatar : selectedValue,
+    }),
+  })
+  .then((res) => res.json())
+  .catch((err) => console.log(err))
+}
+
 
 const classes = useStyles();
 
