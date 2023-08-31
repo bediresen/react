@@ -121,7 +121,6 @@ function CommentForm(props) {
             </OutlinedInput>
         </CardContent>
     )
-
 }
 
 export default CommentForm;
