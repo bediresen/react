@@ -25,16 +25,16 @@ function Auth() {
     }
 
     const sendRequest = (path) => {
-        PostWithoutAuth("/auth/" + path , {
-            userName : username,
+        PostWithoutAuth(("/auth/"+path), {
+            userName : username, 
             password : password,
-        } )
-        .then((res) => res.json())
-        .then((result) => {
-            localStorage.setItem("tokenKey" , result.message);
-            localStorage.setItem("currentUser" , result.userId);
-            localStorage.setItem("userName" , username)})
-        .catch((err) => console.log(err))
+          })
+          .then((res) => res.json())
+          .then((result) => {localStorage.setItem("tokenKey",result.accessToken);
+                            localStorage.setItem("refreshKey",result.refreshToken);
+                            localStorage.setItem("currentUser",result.userId);
+                            localStorage.setItem("userName",username)})
+          .catch((err) => console.log(err))
     }
 
 

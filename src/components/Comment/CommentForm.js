@@ -4,7 +4,7 @@ import { Avatar, InputAdornment, CardContent, OutlinedInput } from "@mui/materia
 import { Link } from 'react-router-dom'
 import { Input } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import { PostWithAuth } from "../../services/HttpService";
+import { PostWithAuth, RefreshToken } from "../../services/HttpService";
 
 const useStyles = makeStyles((theme) => ({
     comment: {
@@ -27,16 +27,51 @@ const useStyles = makeStyles((theme) => ({
 
 function CommentForm(props) {
 
-    const { userId, userName , postId , setCommentRefresh} = props;
+    const { userId, userName, postId, setCommentRefresh } = props;
     const classes = useStyles();
-    const[text, setText] = useState("");
+    const [text, setText] = useState("");
 
-    const saveComment = (postId , userId) => {
-        PostWithAuth("/comments" ,{
-            postId: postId,
-            userId: userId,
-            text: text,
-        } )
+
+
+    const logout = () => {
+        localStorage.removeItem("tokenKey");
+        localStorage.removeItem("currentUser")
+        localStorage.removeItem("userName")
+        localStorage.removeItem("refreshKey")
+        window.location.href = (0);
+    }
+
+    const saveComment = () => {
+        PostWithAuth("/comments",{
+            postId: postId, 
+            userId : userId,
+            text : text,
+          })
+          .then((res) => {
+            if(!res.ok) {
+                RefreshToken()
+                .then((res) => { if(!res.ok) {
+                    logout();
+                } else {
+                   return res.json()
+                }})
+                .then((result) => {
+                    console.log(result)
+
+                    if(result != undefined){
+                        localStorage.setItem("tokenKey",result.accessToken);
+                        saveComment();
+                        setCommentRefresh();
+                    }})
+                .catch((err) => {
+                    console.log(err)
+                })
+            } else 
+            res.json()
+        })
+          .catch((err) => {
+            console.log(err)
+          })
     }
 
     const handleSubmit = () => {
@@ -79,7 +114,7 @@ function CommentForm(props) {
                         </Button>
                     </InputAdornment>
                 }
-                value = {text}
+                value={text}
                 style={{ color: "black", backgroundColor: "white" }}
             >
 

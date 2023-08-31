@@ -17,6 +17,7 @@ const onClick = () => {
     localStorage.removeItem("tokenKey");
     localStorage.removeItem("currentUser")
     localStorage.removeItem("userName")
+    localStorage.removeItem("refreshKey")
     window.location.href = (0);
 }
 
